@@ -6,38 +6,49 @@ import {
   FETCH_ERROR,
   GET_FAVS_FROM_LS,
 } from "./actions";
+import Item from "./components/Item";
 
 const initial = {
   favs: [],
+  data: [],
   current: null,
   error: null,
   loading: true,
 };
 
 function writeFavsToLocalStorage(state) {
-  localStorage.setItem("s10g4", JSON.stringify(state.favs));
+  localStorage.setItem("favs", JSON.stringify(state.favs));
 }
 
 function readFavsFromLocalStorage() {
-  return JSON.parse(localStorage.getItem("s10g4"));
+  return JSON.parse(localStorage.getItem("favs"));
 }
 
 export function myReducer(state = initial, action) {
   switch (action.type) {
     case FAV_ADD:
-      return state;
+      return { ...state, favs: [...state.favs, state.current] };
 
     case FAV_REMOVE:
-      return state;
+      return {
+        ...state,
+        favs: state.favs.filter((Item) => Item.name !== action.payload),
+      };
 
     case FETCH_SUCCESS:
-      return state;
+      const dataList = action.payload;
+      const rand = Math.floor(Math.random() * dataList.length);
+      return {
+        ...state,
+        data: dataList,
+        current: dataList[rand],
+      };
 
     case FETCH_LOADING:
-      return state;
+      return { ...state, loading: action.payload };
 
     case FETCH_ERROR:
-      return state;
+      return { ...state, error: action.payload };
 
     case GET_FAVS_FROM_LS:
       return state;
